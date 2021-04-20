@@ -5,12 +5,12 @@ import project.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Database {
 
     private Connection connection = null;
     private boolean isAccessible = false;
+    private String path = "university.db"; // default path
 
     public void setAccessible(boolean accessible) {
         isAccessible = accessible;
@@ -25,7 +25,7 @@ public class Database {
             if (connection == null) {
                 try {
                     Class.forName("org.sqlite.JDBC");
-                    connection = DriverManager.getConnection("jdbc:sqlite:src/main/java/project/db/university.db");
+                    connection = DriverManager.getConnection("jdbc:sqlite:" + path);
                     createNewDB();
                 } catch (SQLException | ClassNotFoundException e) {
                     e.printStackTrace();
@@ -42,6 +42,10 @@ public class Database {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public void disconnect() { // close connection to DB
@@ -205,6 +209,10 @@ public class Database {
             getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS teacher_students (" +
                     "teacher_id int not null," +
                     "student_id int not null)").execute();
+            getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS student_grades (" +
+                    "student_id int not null," +
+                    "subject varchar(20) not null," +
+                    "grade int not null)").execute();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

@@ -22,12 +22,17 @@ public class Connect_to_SQL_database implements IStrategy {
     @Override
     public StrategyResult execute(List<Person> people) throws CustomException {
         try (Scanner sc = new Scanner(new File("src/main/java/project/db/access_credentials.txt"))) {
-            sc.useDelimiter("USER: |PASS: ");
+            sc.useDelimiter("PATH: |USER: |PASS: ");
+            String path = sc.next().stripTrailing();
             String user = sc.next().stripTrailing();
             String pass = sc.next().stripTrailing();
-            System.out.format("[Info] Connecting to DB with:%n\t[username] %s%n\t[password] %s%n", user, pass);
+            System.out.format("[Info] Connecting to DB with:%n" +
+                    "\t[path] %s%n" +
+                    "\t[username] %s%n" +
+                    "\t[password] %s%n", path, user, pass);
             if (DBusers.get(user).equals(pass)) {
                 db.setAccessible(true);
+                db.setPath(path);
                 return new StrategyResult(true, "Connection successful");
             }
             return new StrategyResult(false, "Wrong credentials");

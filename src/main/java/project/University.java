@@ -148,47 +148,47 @@ public class University {
         }
     }
 
-    public static void printPeople() {
+    public static void printPeople() { // prints all people
         for (Person p : people) {
             if (p instanceof Teacher) p.printInfo();
             else if (p instanceof Student) p.printInfo();
         }
     }
 
-    public static List<Teacher> getTeachers() {
+    public static List<Teacher> getTeachers() { // returns all teachers
         List<Teacher> t = new ArrayList<>();
         for (Person p : people) if (p instanceof Teacher) t.add((Teacher) p);
         return t;
     }
 
-    public static List<Student> getStudents() {
+    public static List<Student> getStudents() { // returns all students
         List<Student> s = new ArrayList<>();
         for (Person p : people) if (p instanceof Student) s.add((Student) p);
         return s;
     }
 
-    public static Teacher getTeacher(int ID) {
+    public static Teacher getTeacher(int ID) { // returns teacher with specified id
         for (Person p : people) if (p.getID() == ID) return (Teacher) p;
         return null;
     }
 
-    public static Student getStudent(int ID) {
+    public static Student getStudent(int ID) { // returns student with specified id
         for (Person p : people) if (p.getID() == ID) return (Student) p;
         return null;
     }
 
-    public static double getExpenses() {
+    public static double getExpenses() { // returns total university expenses
         double out = 0;
         for (Person p : people) out += p.getSalary();
         return out;
     }
 
-    public static Person getPerson(int ID) {
+    public static Person getPerson(int ID) { // returns person with specified id
         for (Person p : people) if (p.getID() == ID) return p;
         return null;
     }
 
-    public static void remPerson(int ID) {
+    public static void remPerson(int ID) { // removes person from university
         Person p = getPerson(ID);
         if (p == null) return;
         if (p instanceof Teacher) {
@@ -206,7 +206,7 @@ public class University {
     }
 
     @Test
-    public void testDatabaseConnection() {
+    public void testDatabaseConnection() { // tests database connection
         sqlDB.setAccessible(true);
         assertNotNull(sqlDB.getConnection());
         sqlDB.setAccessible(false);
