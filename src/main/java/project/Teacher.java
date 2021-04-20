@@ -9,9 +9,9 @@ import java.util.stream.Collectors;
 public class Teacher implements Person {
 
     private int ID;
-    private final String name;
-    private final String surname;
-    private final String birthDate;
+    private String name;
+    private String surname;
+    private String birthDate;
     private double salary;
     private List<Student> students;
 
@@ -43,13 +43,28 @@ public class Teacher implements Person {
     }
 
     @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
     public String getSurname() {
         return surname;
     }
 
     @Override
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    @Override
     public String getBirthDate() {
         return birthDate;
+    }
+
+    @Override
+    public void setBirthDate(String birthDate) {
+        this.birthDate = birthDate;
     }
 
     @Override
@@ -83,12 +98,17 @@ public class Teacher implements Person {
         return students;
     }
 
+    public void setStudents(List<Student> students) {
+        this.students = students;
+    }
+
     public void addStudent(Student s){
         if(!students.contains(s))
             students.add(s);
     }
 
     public void remStudent(Student s){
+        students.remove(s);
         students = students.stream().filter(o -> o.getID() != s.getID()).collect(Collectors.toList());
     }
 
@@ -99,6 +119,5 @@ public class Teacher implements Person {
         System.out.format("\t[Salary] %.2f%n", getSalary()/(100+DPH)*100);
         System.out.println("\t[Number of students] " + getStudents().size());
     }
-
 
 }

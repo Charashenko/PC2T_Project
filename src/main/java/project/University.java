@@ -3,16 +3,9 @@ package project;
 import org.junit.Test;
 import project.db.Database;
 import project.strategies.*;
-import project.strategies.db.Connect_to_SQL_database;
-import project.strategies.db.Delete_Person_from_DB;
-import project.strategies.db.Read_All_Data_from_DB;
-import project.strategies.db.Write_All_Data_to_DB;
+import project.strategies.db.*;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 import static junit.framework.Assert.assertNotNull;
 
@@ -70,11 +63,12 @@ public class University {
             System.out.println("[11] Connect to SQL database");
             System.out.println("[12] Read all data from SQL database");
             System.out.println("[13] Save all data to SQL database");
-            System.out.println("+[14] Delete person from SQL database");
-            System.out.println("+[15] Read person from SQL database");
+            System.out.println("[14] Delete person from SQL database");
+            System.out.println("[15] Read person from SQL database");
             System.out.println("[16] Print all people and their info");
+            System.out.println("[17] Change person ID (first scan old ID then new ID)");
             System.out.println("[0] End application");
-            option = onlyInt(0, 16);
+            option = onlyInt(0, 17);
             try {
                 switch (option) {
                     case 1:
@@ -120,9 +114,13 @@ public class University {
                         stc = new Strategy(new Delete_Person_from_DB(sqlDB));
                         break;
                     case 15:
+                        stc = new Strategy(new Read_Person_from_DB(sqlDB));
                         break;
                     case 16:
                         printPeople();
+                        break;
+                    case 17:
+                        changePersonID(onlyInt(0, 10000), onlyInt(0, 10000));
                         break;
                     case 0:
                         end = true;
@@ -212,5 +210,10 @@ public class University {
         sqlDB.setAccessible(true);
         assertNotNull(sqlDB.getConnection());
         sqlDB.setAccessible(false);
+    }
+
+    public static void changePersonID(int oldID, int newID){
+        Person p = getPerson(oldID);
+        if (p != null) p.setID(newID);
     }
 }

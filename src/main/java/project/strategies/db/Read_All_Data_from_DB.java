@@ -42,6 +42,6 @@ public class Read_All_Data_from_DB implements IStrategy {
         people.clear();
         people.addAll(db.getPeople());
 
-        return new StrategyResult(true, "Null");
+        return new StrategyResult(true, "Data were read from DB");
     }
 }

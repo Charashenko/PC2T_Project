@@ -27,16 +27,20 @@ public class Delete_Person_from_DB implements IStrategy {
 
         int id = University.onlyInt(0, 10000);
         Person p = getPerson(people, id);
-        if (p != null){
-            //TODO remove person from DB
-            return new StrategyResult(true, "Null");
+        if (p != null) {
+            if (p instanceof Teacher) {
+                db.removeTeacher(id);
+            } else if (p instanceof Student) {
+                db.removeStudent(id);
+            }
+            return new StrategyResult(true, "Person was deleted from SQL DB");
         } else {
             return new StrategyResult(false, "Person with that ID doesn't exist");
         }
     }
 
-    public Person getPerson(List<Person> people, int id){
-        for (Person p : people) if(p.getID() == id) return p;
+    public Person getPerson(List<Person> people, int id) {
+        for (Person p : people) if (p.getID() == id) return p;
         return null;
     }
 }

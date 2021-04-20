@@ -26,6 +26,7 @@ public class Database {
                 try {
                     Class.forName("org.sqlite.JDBC");
                     connection = DriverManager.getConnection("jdbc:sqlite:src/main/java/project/db/university.db");
+                    createNewDB();
                 } catch (SQLException | ClassNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -73,58 +74,53 @@ public class Database {
             // get all teachers from db
             ResultSet rs = queryDB("SELECT * FROM teachers");
             while (rs.next()) {
-                Teacher t = new Teacher(rs.getInt("ID"), rs.getString("name"),
-                        rs.getString("surname"), rs.getString("birthdate"), rs.getDouble("salary"));
+                Teacher t = new Teacher(
+                        rs.getInt("ID"),
+                        rs.getString("name"),
+                        rs.getString("surname"),
+                        rs.getString("birthdate"),
+                        rs.getDouble("salary"));
                 teachers.add(t);
             }
             people.addAll(teachers);
 
+            // get all students from DB
+            rs = queryDB("SELECT * FROM students");
+            while (rs.next()) {
+                Student s = new Student(
+                        rs.getInt("ID"),
+                        rs.getString("name"),
+                        rs.getString("surname"),
+                        rs.getString("birthdate"),
+                        rs.getDouble("salary"),
+                        rs.getDouble("studyaverage"));
+                students.add(s);
+            }
+            people.addAll(students);
+
             // get all students of individual teachers
             for (Teacher t : teachers) {
-                // get IDs of teacher's students
                 rs = queryDB("SELECT * FROM teacher_students WHERE teacher_id=" + t.getID());
-                List<Integer> ids = new ArrayList<>();
                 while (rs.next()) {
-                    ids.add(rs.getInt("student_id"));
+                    Person p = getPerson(rs.getInt("student_id"), people);
+                    t.addStudent((Student) p);
                 }
+            }
 
-                // add students to teacher
-                for (int i : ids) {
-                    // get student info
-                    rs = queryDB("SELECT * FROM students WHERE ID=" + i);
-                    Student s = new Student(rs.getString("name"), rs.getString("surname"),
-                            rs.getString("birthdate"), t);
-                    s.setID(rs.getInt("ID"));
-                    s.setSalary(rs.getDouble("salary"));
+            // get all teachers of individual students
+            for (Student s : students) {
+                rs = queryDB("SELECT * FROM student_teachers WHERE student_id=" + s.getID());
+                while (rs.next()) {
+                    Person p = getPerson(rs.getInt("teacher_id"), people);
+                    s.addTeacher((Teacher) p);
+                }
+            }
 
-                    // get student's grades
-                    rs = queryDB("SELECT * FROM student_grades WHERE student_id=" + i);
-                    while (rs.next()) {
-                        s.addGrade(new Grade(rs.getString("subject"), rs.getInt("grade")));
-                    }
-
-                    // get student's teachers
-                    rs = queryDB("SELECT * FROM student_teachers WHERE student_id=" + i);
-                    while (rs.next()) {
-                        ResultSet finalRs = rs;
-                        List<Teacher> studentTeachers = teachers.stream().filter(o -> { // filter teachers based on ID
-                            try {
-                                return o.getID() == finalRs.getInt("teacher_id");
-                            } catch (SQLException e) {
-                                System.out.println(e.getMessage());
-                                return false;
-                            }
-                        }).collect(Collectors.toList());
-                        for (Teacher studentTeacher : studentTeachers) {
-                            s.addTeacher(studentTeacher);
-                        }
-                    }
-
-                    // add student to teacher
-                    t.addStudent(s);
-                    if (!students.contains(s)) {
-                        students.add(s);
-                    }
+            // get all grades of individual students
+            for (Student s : students) {
+                rs = queryDB("SELECT * FROM student_grades WHERE student_id=" + s.getID());
+                while (rs.next()) {
+                    s.addGrade(new Grade(rs.getString("subject"), rs.getInt("grade")));
                 }
             }
 
@@ -132,13 +128,13 @@ public class Database {
             System.out.println(e.getMessage());
         }
 
-        people.addAll(students);
         return people; // return list of all people in DB
     }
 
     public void insertTeacher(Teacher t) { // insert teacher into DB
         try {
-            PreparedStatement ps = getConnection().prepareStatement("INSERT INTO teachers (ID,name,surname,birthdate,salary) VALUES (?,?,?,?,?)");
+            PreparedStatement ps = getConnection().prepareStatement(
+                    "INSERT INTO teachers (ID,name,surname,birthdate,salary) VALUES (?,?,?,?,?)");
             ps.setInt(1, t.getID());
             ps.setString(2, t.getName());
             ps.setString(3, t.getSurname());
@@ -158,8 +154,8 @@ public class Database {
 
     public void insertStudent(Student s) { // insert student into DB
         try {
-            PreparedStatement ps = getConnection().prepareStatement("INSERT INTO students (ID,name,surname,birthdate,salary,studyaverage) VALUES" +
-                    "(?,?,?,?,?,?)");
+            PreparedStatement ps = getConnection().prepareStatement(
+                    "INSERT INTO students (ID,name,surname,birthdate,salary,studyaverage) VALUES (?,?,?,?,?,?)");
             ps.setInt(1, s.getID());
             ps.setString(2, s.getName());
             ps.setString(3, s.getSurname());
@@ -188,6 +184,32 @@ public class Database {
         }
     }
 
+    public void createNewDB() { // creates new SQL tables
+        try {
+            getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS students (" +
+                    "ID int primary key not null," +
+                    "name varchar(100) not null," +
+                    "surname varchar(100) not null," +
+                    "birthdate varchar(20) not null," +
+                    "salary double default 0," +
+                    "studyaverage double default 1)").execute();
+            getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS teachers (" +
+                    "ID int primary key not null," +
+                    "name varchar(100) not null," +
+                    "surname varchar(100) not null," +
+                    "birthdate varchar(20) not null," +
+                    "salary double default 0)").execute();
+            getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS student_teachers (" +
+                    "student_id int not null," +
+                    "teacher_id int not null)").execute();
+            getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS teacher_students (" +
+                    "teacher_id int not null," +
+                    "student_id int not null)").execute();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
     public void clearTables() { // remove everything from tables
         try {
             getConnection().prepareStatement("DELETE FROM student_grades").execute();
@@ -200,8 +222,30 @@ public class Database {
         }
     }
 
-    public void removeTeacher(int id) { // remove teacher from DB
+    public void removeTeacher(int id) { // removes teacher from DB
+        try {
+            getConnection().prepareStatement("DELETE FROM teachers WHERE id=" + id).execute();
+            getConnection().prepareStatement("DELETE FROM student_teachers WHERE teacher_id=" + id).execute();
+            getConnection().prepareStatement("DELETE FROM teacher_students WHERE teacher_id=" + id).execute();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
 
+    public void removeStudent(int id) { // removes student from DB
+        try {
+            getConnection().prepareStatement("DELETE FROM students WHERE id=" + id).execute();
+            getConnection().prepareStatement("DELETE FROM student_teachers WHERE student_id=" + id).execute();
+            getConnection().prepareStatement("DELETE FROM teacher_students WHERE student_id=" + id).execute();
+            getConnection().prepareStatement("DELETE FROM student_grades WHERE student_id=" + id).execute();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    public Person getPerson(int id, List<Person> people) {
+        for (Person p : people) if (p.getID() == id) return p;
+        return null;
     }
 
 }

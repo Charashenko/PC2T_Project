@@ -7,13 +7,13 @@ import java.util.stream.Collectors;
 public class Student implements Person {
 
     private int ID;
-    private final String name;
-    private final String surname;
-    private final String birthDate;
+    private String name;
+    private String surname;
+    private String birthDate;
     private double salary;
     private double avg;
     private List<Teacher> teachers = new ArrayList<>();
-    private final List<Grade> grades = new ArrayList<>();
+    private List<Grade> grades = new ArrayList<>();
 
     public Student(String name, String surname, String birthDate, Teacher teacher) {
         this.name = name;
@@ -44,13 +44,28 @@ public class Student implements Person {
     }
 
     @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
     public String getSurname() {
         return surname;
     }
 
     @Override
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    @Override
     public String getBirthDate() {
         return birthDate;
+    }
+
+    @Override
+    public void setBirthDate(String birthDate) {
+        this.birthDate = birthDate;
     }
 
     @Override
@@ -122,10 +137,7 @@ public class Student implements Person {
     }
 
     public void remTeacher(Teacher t){
-        if(teachers.size() > 1) {
-            teachers = teachers.stream().filter(o -> o.getID() != t.getID()).collect(Collectors.toList());
-            t.remStudent(this);
-        }
+        teachers = teachers.stream().filter(o -> o.getID() != t.getID()).collect(Collectors.toList());
     }
 
     public List<Grade> getGrades() {
@@ -150,4 +162,15 @@ public class Student implements Person {
         return (double) grades/numOfGrades;
     }
 
+    public void setAvg(double avg) {
+        this.avg = avg;
+    }
+
+    public void setTeachers(List<Teacher> teachers) {
+        this.teachers = teachers;
+    }
+
+    public void setGrades(List<Grade> grades) {
+        this.grades = grades;
+    }
 }

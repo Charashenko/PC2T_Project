@@ -9,8 +9,11 @@ public interface Person {
 
     String getFullName();
     String getName();
+    void setName(String name);
     String getSurname();
+    void setSurname(String surname);
     String getBirthDate();
+    void setBirthDate(String birthdate);
     int getID();
     void setID(int id);
     double getSalary();
