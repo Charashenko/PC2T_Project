@@ -14,6 +14,12 @@ public class University {
     private static List<Person> people = new ArrayList<>();
     private static final Database sqlDB = new Database();
 
+    /**
+     * Method to scan only integer from given range
+     * @param start Start of range
+     * @param end End of range
+     * @return Scanned int
+     */
     public static int onlyInt(int start, int end) {
         Scanner sc = new Scanner(System.in);
         try {
@@ -31,7 +37,7 @@ public class University {
     }
 
     public static void main(String[] args) {
-        //TEST
+        //TESTING PURPOSES
         people.add(new Teacher("Miro", "Vojnik", "22.03.2000"));
         people.add(new Teacher("Ladislav", "Kobylko", "20.03.1990"));
         people.add(new Student("Jozo", "Marchev", "16.04.2001", (Teacher) people.get(0)));
@@ -43,12 +49,13 @@ public class University {
         ((Student) people.get(3)).addGrade(new Grade("math", 2));
         ((Student) people.get(3)).addGrade(new Grade("anj", 3));
         ((Student) people.get(3)).addGrade(new Grade("chem", 3));
-        //TEST END
+        //TESTING END
+
         boolean end = false;
         int option;
         Strategy stc = null;
         Scanner sc = new Scanner(System.in);
-        while (!end) {
+        while (!end) { // main menu
             System.out.println("\n\t---- [OPTIONS] ----");
             System.out.println("[1] Add new person to university");
             System.out.println("[2] Set new grade for student");
@@ -70,7 +77,7 @@ public class University {
             System.out.println("[0] End application");
             option = onlyInt(0, 17);
             try {
-                switch (option) {
+                switch (option) { // Choosing action from menu
                     case 1:
                         stc = new Strategy(new Add_Person_To_University());
                         break;
@@ -127,11 +134,11 @@ public class University {
                         sqlDB.disconnect();
                         break;
                 }
-                if (stc != null) {
+                if (stc != null) { // if action is null, skip printing of info
                     StrategyResult ans = stc.executeStrategy(people);
-                    if (ans != null) {
+                    if (ans != null) { // if answer is null, skip printing of answer
                         if (ans.getResult()) {
-                            if (!ans.getMessage().equals("Null")) {
+                            if (!ans.getMessage().equals("Null")) { // if answer equals "Null", skip printing of info
                                 System.out.println("[Info] " + ans.getMessage());
                             }
                         } else {
@@ -148,47 +155,81 @@ public class University {
         }
     }
 
-    public static void printPeople() { // prints all people
+    /**
+     * Prints all people in university
+     */
+    public static void printPeople() {
         for (Person p : people) {
             if (p instanceof Teacher) p.printInfo();
             else if (p instanceof Student) p.printInfo();
         }
     }
 
-    public static List<Teacher> getTeachers() { // returns all teachers
+    /**
+     * Returns all teachers
+     * @return List of teachers
+     */
+    public static List<Teacher> getTeachers() {
         List<Teacher> t = new ArrayList<>();
         for (Person p : people) if (p instanceof Teacher) t.add((Teacher) p);
         return t;
     }
 
-    public static List<Student> getStudents() { // returns all students
+    /**
+     * Returns all students
+     * @return List of students
+     */
+    public static List<Student> getStudents() {
         List<Student> s = new ArrayList<>();
         for (Person p : people) if (p instanceof Student) s.add((Student) p);
         return s;
     }
 
-    public static Teacher getTeacher(int ID) { // returns teacher with specified id
+    /**
+     * Returns teacher with specified id
+     * @param ID ID of teacher
+     * @return Teacher
+     */
+    public static Teacher getTeacher(int ID) {
         for (Person p : people) if (p.getID() == ID) return (Teacher) p;
         return null;
     }
 
-    public static Student getStudent(int ID) { // returns student with specified id
+    /**
+     * Returns student with specified id
+     * @param ID ID of student
+     * @return Student
+     */
+    public static Student getStudent(int ID) {
         for (Person p : people) if (p.getID() == ID) return (Student) p;
         return null;
     }
 
-    public static double getExpenses() { // returns total university expenses
+    /**
+     * Calculates total expenses of university
+     * @return Calculated expenses
+     */
+    public static double getExpenses() {
         double out = 0;
         for (Person p : people) out += p.getSalary();
         return out;
     }
 
+    /**
+     * Gets person from university
+     * @param ID ID of person to be returned
+     * @return Person
+     */
     public static Person getPerson(int ID) { // returns person with specified id
         for (Person p : people) if (p.getID() == ID) return p;
         return null;
     }
 
-    public static void remPerson(int ID) { // removes person from university
+    /**
+     * Removes person from university
+     * @param ID ID of person to be removed
+     */
+    public static void remPerson(int ID) {
         Person p = getPerson(ID);
         if (p == null) return;
         if (p instanceof Teacher) {
@@ -205,13 +246,21 @@ public class University {
         people.remove(p);
     }
 
+    /**
+     * Tests database connection
+     */
     @Test
-    public void testDatabaseConnection() { // tests database connection
+    public void testDatabaseConnection() {
         sqlDB.setAccessible(true);
         assertNotNull(sqlDB.getConnection());
         sqlDB.setAccessible(false);
     }
 
+    /**
+     * Changes person ID
+     * @param oldID ID of person to be changed
+     * @param newID new ID to be changed to
+     */
     public static void changePersonID(int oldID, int newID){
         Person p = getPerson(oldID);
         if (p != null) p.setID(newID);

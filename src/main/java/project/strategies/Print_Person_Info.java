@@ -4,6 +4,9 @@ import project.*;
 
 import java.util.List;
 
+/**
+ * Prints person info
+ */
 public class Print_Person_Info implements IStrategy {
 
     @Override
@@ -17,7 +20,7 @@ public class Print_Person_Info implements IStrategy {
         int option = University.onlyInt(1, 2);
         System.out.println("[Info] Select from available IDs");
 
-        if (option == 1) {
+        if (option == 1) { //prints teacher info
             for (Teacher t : University.getTeachers()) {
                 System.out.format("\t[%d] %s%n", t.getID(), t.getFullName());
             }
@@ -28,7 +31,7 @@ public class Print_Person_Info implements IStrategy {
             } else {
                 return new StrategyResult(false, "Nobody with that ID exists");
             }
-        } else {
+        } else { // prints student info
             for (Student s : University.getStudents()) {
                 System.out.format("\t[%d] %s%n", s.getID(), s.getFullName());
             }

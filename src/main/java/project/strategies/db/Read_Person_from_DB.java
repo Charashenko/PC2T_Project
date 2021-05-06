@@ -6,6 +6,9 @@ import project.db.Database;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Reads one person from DB and saves it to RAM
+ */
 public class Read_Person_from_DB implements IStrategy {
 
     private Database db;

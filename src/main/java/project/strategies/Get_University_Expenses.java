@@ -4,6 +4,9 @@ import project.*;
 
 import java.util.List;
 
+/**
+ * Gets university expenses
+ */
 public class Get_University_Expenses implements IStrategy {
 
     @Override

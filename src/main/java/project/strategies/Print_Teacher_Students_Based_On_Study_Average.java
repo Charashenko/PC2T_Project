@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 
+/**
+ * Prints sorted students of one teacher based on their study average
+ */
 public class Print_Teacher_Students_Based_On_Study_Average implements IStrategy {
     @Override
     public StrategyResult execute(List<Person> people) throws CustomException {

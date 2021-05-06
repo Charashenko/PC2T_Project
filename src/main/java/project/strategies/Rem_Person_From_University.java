@@ -5,6 +5,9 @@ import project.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Removes a specified person from university
+ */
 public class Rem_Person_From_University implements IStrategy {
     @Override
     public StrategyResult execute(List<Person> people) throws CustomException {

@@ -4,6 +4,9 @@ import project.*;
 
 import java.util.List;
 
+/**
+ * Assigns student to specified teacher
+ */
 public class Assignment_Of_Students_To_Teacher implements IStrategy {
 
     @Override

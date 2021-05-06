@@ -4,6 +4,9 @@ import project.*;
 
 import java.util.List;
 
+/**
+ * Prints all teachers of specified student
+ */
 public class Print_Teachers_Of_Student implements IStrategy {
 
     @Override

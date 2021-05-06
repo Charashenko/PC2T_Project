@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Connects to sql DB using credentials and path from supplied file
+ */
 public class Connect_to_SQL_database implements IStrategy {
 
     private final Database db;
@@ -16,7 +19,7 @@ public class Connect_to_SQL_database implements IStrategy {
 
     public Connect_to_SQL_database(Database db) {
         this.db = db;
-        DBusers.put("admin", "pc2t");
+        DBusers.put("admin", "pc2t"); // added authorized user
     }
 
     @Override

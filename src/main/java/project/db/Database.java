@@ -10,7 +10,7 @@ public class Database {
 
     private Connection connection = null;
     private boolean isAccessible = false;
-    private String path = "university.db"; // default path
+    private String path = "src/main/java/project/db/university.db"; // default path
 
     public void setAccessible(boolean accessible) {
         isAccessible = accessible;
@@ -36,7 +36,10 @@ public class Database {
         return null;
     }
 
-    public void printConnection() { // print DB connection
+    /**
+     * Prints DB connection
+     */
+    public void printConnection() {
         try {
             System.out.println(getConnection().getSchema());
         } catch (SQLException e) {
@@ -44,11 +47,18 @@ public class Database {
         }
     }
 
+    /**
+     * Sets path to DB file
+     * @param path Path to be set
+     */
     public void setPath(String path) {
         this.path = path;
     }
 
-    public void disconnect() { // close connection to DB
+    /**
+     * Closes connection to DB
+     */
+    public void disconnect() {
         try {
             if (connection != null)
                 connection.close();
@@ -57,7 +67,12 @@ public class Database {
         }
     }
 
-    public ResultSet queryDB(String query) { // universal query
+    /**
+     * Universal query
+     * @param query Query to be executed
+     * @return Results of query
+     */
+    public ResultSet queryDB(String query) {
         if (getConnection() == null) {
             return null;
         }
@@ -70,7 +85,11 @@ public class Database {
         }
     }
 
-    public List<Person> getPeople() { // get all people from DB
+    /**
+     * Gets all people from DB
+     * @return List of all people
+     */
+    public List<Person> getPeople() {
         List<Person> people = new ArrayList<>();
         List<Teacher> teachers = new ArrayList<>();
         List<Student> students = new ArrayList<>();
@@ -135,7 +154,11 @@ public class Database {
         return people; // return list of all people in DB
     }
 
-    public void insertTeacher(Teacher t) { // insert teacher into DB
+    /**
+     * Inserts teacher into DB
+     * @param t Teacher to be inserted
+     */
+    public void insertTeacher(Teacher t) {
         try {
             PreparedStatement ps = getConnection().prepareStatement(
                     "INSERT INTO teachers (ID,name,surname,birthdate,salary) VALUES (?,?,?,?,?)");
@@ -156,7 +179,11 @@ public class Database {
         }
     }
 
-    public void insertStudent(Student s) { // insert student into DB
+    /**
+     *  Inserts student into DB
+     * @param s Student to be inserted
+     */
+    public void insertStudent(Student s) {
         try {
             PreparedStatement ps = getConnection().prepareStatement(
                     "INSERT INTO students (ID,name,surname,birthdate,salary,studyaverage) VALUES (?,?,?,?,?,?)");
@@ -188,7 +215,10 @@ public class Database {
         }
     }
 
-    public void createNewDB() { // creates new SQL tables
+    /**
+     * Creates new SQL tables if they don't exist
+     */
+    public void createNewDB() {
         try {
             getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS students (" +
                     "ID int primary key not null," +
@@ -218,7 +248,10 @@ public class Database {
         }
     }
 
-    public void clearTables() { // remove everything from tables
+    /**
+     * Purge everything from DB tables
+     */
+    public void clearTables() {
         try {
             getConnection().prepareStatement("DELETE FROM student_grades").execute();
             getConnection().prepareStatement("DELETE FROM student_teachers").execute();
@@ -230,7 +263,11 @@ public class Database {
         }
     }
 
-    public void removeTeacher(int id) { // removes teacher from DB
+    /**
+     * Removes teacher from DB
+     * @param id ID of teacher
+     */
+    public void removeTeacher(int id) {
         try {
             getConnection().prepareStatement("DELETE FROM teachers WHERE id=" + id).execute();
             getConnection().prepareStatement("DELETE FROM student_teachers WHERE teacher_id=" + id).execute();
@@ -240,7 +277,11 @@ public class Database {
         }
     }
 
-    public void removeStudent(int id) { // removes student from DB
+    /**
+     * Removes student from DB
+     * @param id ID of student
+     */
+    public void removeStudent(int id) {
         try {
             getConnection().prepareStatement("DELETE FROM students WHERE id=" + id).execute();
             getConnection().prepareStatement("DELETE FROM student_teachers WHERE student_id=" + id).execute();
@@ -251,6 +292,12 @@ public class Database {
         }
     }
 
+    /**
+     * Gets person based on ID from list of people
+     * @param id ID of wanted person
+     * @param people List of people to search from
+     * @return Found person
+     */
     public Person getPerson(int id, List<Person> people) {
         for (Person p : people) if (p.getID() == id) return p;
         return null;

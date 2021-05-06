@@ -5,6 +5,9 @@ import project.db.Database;
 
 import java.util.List;
 
+/**
+ * Deletes person from sql DB
+ */
 public class Delete_Person_from_DB implements IStrategy {
 
     private final Database db;

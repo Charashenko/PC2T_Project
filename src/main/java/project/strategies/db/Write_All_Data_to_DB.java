@@ -6,6 +6,9 @@ import project.db.Database;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Writes all data from DB in RAM to sql DB
+ */
 public class Write_All_Data_to_DB implements IStrategy {
 
     private final Database db;

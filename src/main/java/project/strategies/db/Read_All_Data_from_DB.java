@@ -6,6 +6,9 @@ import project.db.Database;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Reads whole sql DB and saves it to RAM
+ */
 public class Read_All_Data_from_DB implements IStrategy {
 
     private final Database db;

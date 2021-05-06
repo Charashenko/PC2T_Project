@@ -5,6 +5,9 @@ import project.*;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Adds new grade to the specified student
+ */
 public class Set_New_Grade implements IStrategy {
     @Override
     public StrategyResult execute(List<Person> people) throws CustomException {

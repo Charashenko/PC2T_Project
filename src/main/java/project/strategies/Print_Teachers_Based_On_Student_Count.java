@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 
+/**
+ * Prints sorted teachers based on theirs student count
+ */
 public class Print_Teachers_Based_On_Student_Count implements IStrategy {
 
     @Override
